@@ -4,17 +4,25 @@ import { Switch, Route, Link } from 'react-router-dom';
 
 import LoginForm from './components/LoginForm';
 import FriendList from './components/FriendList';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
     <div className="App">
-      <Link to="/friend-list">Friend List</Link>
+      <ul>
+        <li>
+          <Link to="/login">Login</Link>
+        </li>
+        <li>
+          <Link to="/friend-list">Friend List</Link>
+        </li>
+      </ul>
       
       <Switch>
-        <Route path="/friend-list">
+        <PrivateRoute path="/friend-list">
           <FriendList />
-        </Route>
-        <Route path="/">
+        </PrivateRoute>
+        <Route path="/login">
           <LoginForm />
         </Route>
       </Switch>
