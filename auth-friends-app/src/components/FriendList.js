@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import { axiosWithAuth } from '../utils/axiosWithAuth';
 
+import NewFriendForm from './NewFriendForm';
+
 export default function FriendList() {
   const [friends, setFriends] = useState([])
   const [error, setError] = useState('')
@@ -29,13 +31,14 @@ export default function FriendList() {
 
   return (
     <div>
+      <NewFriendForm />
       {error && <div>{error}</div>}
       {friends && friends.map(friend => (
-        <div>
+        <div key={friend.id}>
           <h2>{friend.name}</h2>
           <ul>
-            <li>{friend.email}</li>
-            <li>{friend.age}</li>
+            <li key={friend.email}>{friend.email}</li>
+            <li key={friend.age}>{friend.age}</li>
           </ul>
         </div>
       ))} 
