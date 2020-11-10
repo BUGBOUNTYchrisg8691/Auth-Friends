@@ -1,40 +1,45 @@
-import React, { useState } from 'react';
-import { v4 as uuid } from 'uuid';
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import { v4 as uuid } from "uuid";
 
-import { axiosWithAuth } from '../utils/axiosWithAuth';
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 const initialFormValues = {
-  name: '',
-  age: '',
-  email: '',
-}
+  name: "",
+  age: "",
+  email: "",
+};
 
-export default function NewFriendForm() {
+export default function NewFriendForm(props) {
   const [formValues, setFormValues] = useState(initialFormValues);
+  const { push } = useHistory();
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setFormValues({
       ...formValues,
-      [name]: value
-    })
-  }
+      [name]: value,
+    });
+  };
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
     const newFriend = {
       ...formValues,
-      id: uuid()
-    }
+      id: uuid(),
+    };
     axiosWithAuth()
-      .post('http://localhost:5000/api/friends', newFriend)
+      .post("http://localhost:5000/api/friends", newFriend)
       .then((res) => {
-        console.log('Post Successful ==> ', res);
+        console.log("Post Successful ==> ", res);
+        props.handleUpdateFriends(res.data);
+        push("/friend-list");
       })
       .catch((err) => {
         console.log(err);
-      })
-  }
+      });
+    setFormValues(initialFormValues);
+  };
 
   return (
     <form onSubmit={handleOnSubmit}>
@@ -61,5 +66,5 @@ export default function NewFriendForm() {
       />
       <button>Add Friend</button>
     </form>
-  )
+  );
 }

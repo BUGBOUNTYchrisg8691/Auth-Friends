@@ -1,47 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-import { axiosWithAuth } from '../utils/axiosWithAuth';
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 
-import NewFriendForm from './NewFriendForm';
+import NewFriendForm from "./NewFriendForm";
 
-export default function FriendList() {
-  const [friends, setFriends] = useState([])
-  const [error, setError] = useState('')
+export default function FriendList({ isEditing }) {
+  const [friends, setFriends] = useState([]);
+  const [error, setError] = useState("");
 
   const fetchFriends = () => {
     return axiosWithAuth()
-      .get('http://localhost:5000/api/friends')
+      .get("http://localhost:5000/api/friends")
       .then((res) => {
-        return res
+        return res;
       })
       .catch((err) => {
-        return err
-      })
-  }
+        return err;
+      });
+  };
+
+  const handleUpdateFriends = (friends) => {
+    setFriends(friends);
+  };
 
   useEffect(() => {
     fetchFriends()
       .then((res) => {
-        setFriends(res.data)
+        setFriends(res.data);
       })
       .catch((err) => {
-        setError(err.message)
-      })
-  }, [])
+        setError(err.message);
+      });
+  }, []);
 
   return (
     <div>
-      <NewFriendForm />
+      {isEditing && (
+        <NewFriendForm
+          isEditing={isEditing}
+          handleUpdateFriends={handleUpdateFriends}
+        />
+      )}
       {error && <div>{error}</div>}
-      {friends && friends.map(friend => (
-        <div key={friend.id}>
-          <h2>{friend.name}</h2>
-          <ul>
-            <li key={friend.email}>{friend.email}</li>
-            <li key={friend.age}>{friend.age}</li>
-          </ul>
-        </div>
-      ))} 
+      {friends &&
+        friends.map((friend) => (
+          <div key={friend.id}>
+            <h2>{friend.name}</h2>
+            <ul>
+              <li key={friend.email}>{friend.email}</li>
+              <li key={friend.age}>{friend.age}</li>
+            </ul>
+          </div>
+        ))}
     </div>
-  )
+  );
 }
