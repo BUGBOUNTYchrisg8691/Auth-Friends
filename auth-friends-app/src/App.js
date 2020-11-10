@@ -11,11 +11,20 @@ import NewFriendForm from "./components/NewFriendForm";
 function App() {
   const [isEditing, setIsEditing] = useState(false);
 
+  const handleLogOut = () => {
+    localStorage.clear("token");
+  };
+
   return (
     <div className="App">
       <ul>
         <li>
           <Link to="/login">Login</Link>
+        </li>
+        <li>
+          <Link to="/" onClick={handleLogOut}>
+            Logout
+          </Link>
         </li>
         <li>
           <Link to="/friend-list">Friend List</Link>
