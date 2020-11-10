@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 const initialFormValues = {
@@ -62,4 +63,5 @@ export default class NewFriendForm extends Component {
       </form>
     );
   }
+
 }
