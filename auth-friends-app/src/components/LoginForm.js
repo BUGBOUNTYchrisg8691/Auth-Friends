@@ -1,56 +1,62 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { Component } from "react";
 
-import { axiosWithAuth } from '../utils/axiosWithAuth';
+import axios from "axios";
 
 const initialFormValues = {
-  username: '',
-  password: ''
-}
+  username: "",
+  password: "",
+};
 
-export default function LoginForm() {
-  const [formValues, setFormValues] = useState(initialFormValues);
-  const hist = useHistory()
+export default class LoginForm extends Component {
+  state = {
+    formValues: initialFormValues,
+  };
 
-  const handleOnChange = (e) => {
-    const { value, name } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value
-    })
-  }
+  handleOnChange = (e) => {
+    const { name, value } = e.target;
+    this.setState({
+      formValues: {
+        ...this.state.formValues,
+        [name]: value,
+      },
+    });
+  };
 
-  const handleOnSubmit = (e) => {
+  handleOnSubmit = (e) => {
     e.preventDefault();
-    axiosWithAuth()
-      .post('http://localhost:5000/api/login', formValues)
+    axios
+      .post("http://localhost:5000/api/login", this.state.formValues)
       .then((res) => {
-        localStorage.setItem('token', res.data.payload)
-        hist.push('/friend-list')
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-    setFormValues(initialFormValues)
+        console.log(res);
+        localStorage.setItem("token", res.data.payload);
+        this.props.history.push("/friends");
+        this.props.setIsLoggedIn(true);
+      });
+    this.setState({
+      formValues: initialFormValues,
+    });
+  };
+
+  render() {
+    return (
+      <form onSubmit={this.handleOnSubmit}>
+        <label htmlFor="username">Username</label>
+        <input
+          type="text"
+          name="username"
+          value={this.state.formValues.username}
+          onChange={this.handleOnChange}
+        />
+        <label htmlFor="password">Password</label>
+        <input
+          type="text"
+          name="password"
+          value={this.state.formValues.password}
+          onChange={this.handleOnChange}
+        />
+        <button>Login</button>
+      </form>
+    );
   }
 
-  return (
-    <form onSubmit={handleOnSubmit}>
-      <label htmlFor="username">Username</label>
-      <input
-        type="text"
-        name="username"
-        value={formValues.username}
-        onChange={handleOnChange}
-      />
-      <label htmlFor="password">Password</label>
-      <input
-        type="password"
-        name="password"
-        value={formValues.password}
-        onChange={handleOnChange}
-      />
-      <button>Login</button>
-    </form>
-  )
 }

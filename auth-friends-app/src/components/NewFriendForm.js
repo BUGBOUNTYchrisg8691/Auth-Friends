@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { v4 as uuid } from "uuid";
+import React, { Component } from "react";
 
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 
@@ -10,61 +8,60 @@ const initialFormValues = {
   email: "",
 };
 
-export default function NewFriendForm(props) {
-  const [formValues, setFormValues] = useState(initialFormValues);
-  const { push } = useHistory();
+export default class NewFriendForm extends Component {
+  state = {
+    formValues: initialFormValues,
+  };
 
-  const handleOnChange = (e) => {
+  handleOnChange = (e) => {
     const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
+    this.setState({
+      formValues: {
+        ...this.state.formValues,
+        [name]: value,
+      },
     });
   };
 
-  const handleOnSubmit = (e) => {
+  handleOnSubmit = (e) => {
     e.preventDefault();
-    const newFriend = {
-      ...formValues,
-      id: uuid(),
-    };
     axiosWithAuth()
-      .post("http://localhost:5000/api/friends", newFriend)
+      .post("/api/friends", this.state.formValues)
       .then((res) => {
-        console.log("Post Successful ==> ", res);
-        props.handleUpdateFriends(res.data);
-        push("/friend-list");
+        console.log("Post Success ==>> ", res);
+        this.props.setFriends(res.data);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Post Failure ==>> ", err);
       });
-    setFormValues(initialFormValues);
   };
+  render() {
+    return (
+      <form onSubmit={this.handleOnSubmit}>
+        <label htmlFor="name">Name</label>
+        <input
+          type="name"
+          name="name"
+          value={this.state.formValues.name}
+          onChange={this.handleOnChange}
+        />
+        <label htmlFor="age">Age</label>
+        <input
+          type="age"
+          name="age"
+          value={this.state.formValues.age}
+          onChange={this.handleOnChange}
+        />
+        <label htmlFor="email">Email</label>
+        <input
+          type="email"
+          name="email"
+          value={this.state.formValues.email}
+          onChange={this.handleOnChange}
+        />
+        <button>Add New Friend</button>
+      </form>
+    );
+  }
 
-  return (
-    <form onSubmit={handleOnSubmit}>
-      <label htmlFor="name">Name</label>
-      <input
-        type="text"
-        name="name"
-        value={formValues.name}
-        onChange={handleOnChange}
-      />
-      <label htmlFor="age">Age</label>
-      <input
-        type="text"
-        name="age"
-        value={formValues.age}
-        onChange={handleOnChange}
-      />
-      <label htmlFor="email">Email</label>
-      <input
-        type="email"
-        name="email"
-        value={formValues.email}
-        onChange={handleOnChange}
-      />
-      <button>Add Friend</button>
-    </form>
-  );
 }

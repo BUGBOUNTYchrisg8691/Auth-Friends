@@ -1,48 +1,61 @@
-import React, { useState } from "react";
-import { Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  NavLink,
+  Switch,
+} from "react-router-dom";
+import { useState } from "react";
+
+import LoginForm from "./components/LoginForm";
+import FriendsList from "./components/FriendsList";
+
+import PrivateRoute from "./components/PrivateRoute";
+
+import { axiosWithAuth } from "./utils/axiosWithAuth";
 
 import "./App.css";
 
-import LoginForm from "./components/LoginForm";
-import FriendList from "./components/FriendList";
-import PrivateRoute from "./components/PrivateRoute";
-import NewFriendForm from "./components/NewFriendForm";
-
 function App() {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogOut = () => {
-    localStorage.clear("token");
+  const logout = () => {
+    localStorage.removeItem("token");
   };
 
   return (
-    <div className="App">
-      <ul>
-        <li>
-          <Link to="/login">Login</Link>
-        </li>
-        <li>
-          <Link to="/" onClick={handleLogOut}>
-            Logout
-          </Link>
-        </li>
-        <li>
-          <Link to="/friend-list">Friend List</Link>
-        </li>
-        <li>
-          <Link onClick={() => setIsEditing(!isEditing)}>Add Friend</Link>
-        </li>
-      </ul>
+    <Router>
+      <div className="App">
+        <ul>
+          {!isLoggedIn ? (
+            <li>
+              <NavLink to="/login">Login</NavLink>
+            </li>
+          ) : null}
+          <li>
+            <NavLink to="#" onClick={logout}>
+              Logout
+            </NavLink>
+          </li>
+          {isLoggedIn ? (
+            <li>
+              <NavLink to="/friends">FriendsList</NavLink>
+            </li>
+          ) : null}
+        </ul>
 
-      <Switch>
-        <PrivateRoute path="/friend-list">
-          <FriendList isEditing={isEditing} />
-        </PrivateRoute>
-        <Route path="/login">
-          <LoginForm />
-        </Route>
-      </Switch>
-    </div>
+        <Switch>
+          <PrivateRoute path="/friends" component={FriendsList} />
+          <Route
+            path="/login"
+            render={(props) => {
+              return <LoginForm {...props} setIsLoggedIn={setIsLoggedIn} />;
+            }}
+          />
+          {/* <Route  component={Login} /> */}
+        </Switch>
+      </div>
+      ;
+    </Router>
   );
 }
 
