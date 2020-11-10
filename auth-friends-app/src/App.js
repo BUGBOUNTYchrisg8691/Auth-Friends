@@ -48,7 +48,7 @@ function App() {
           <Route
             path="/login"
             render={(props) => {
-              return <LoginForm {...props} setLoggedIn={setIsLoggedIn} />;
+              return <LoginForm {...props} setIsLoggedIn={setIsLoggedIn} />;
             }}
           />
           {/* <Route  component={Login} /> */}
