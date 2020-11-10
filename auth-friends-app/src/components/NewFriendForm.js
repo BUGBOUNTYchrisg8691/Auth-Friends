@@ -34,6 +34,9 @@ export default class NewFriendForm extends Component {
       .catch((err) => {
         console.log("Post Failure ==>> ", err);
       });
+    this.setState({
+      formValues: initialFormValues,
+    });
   };
   render() {
     return (
@@ -63,5 +66,4 @@ export default class NewFriendForm extends Component {
       </form>
     );
   }
-
 }
